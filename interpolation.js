@@ -164,7 +164,10 @@ function predictTimes(inputDistance, inputTime) {
         const columnKey = Object.keys(sourceTable === table20Data ? table20Distances : table21Distances)
             .find(key => (sourceTable === table20Data ? table20Distances : table21Distances)[key] === column);
 
-        if (lowerRow && upperRow && lowerRow !== upperRow) {
+        // If this is the input column, preserve the input time
+        if (column === sourceColumn) {
+            results[columnKey] = inputTime;
+        } else if (lowerRow && upperRow && lowerRow !== upperRow) {
             const y0 = parseRange(lowerRow[column]);
             const y1 = parseRange(upperRow[column]);
             if (y0 !== null && y1 !== null) {
@@ -183,17 +186,34 @@ function predictTimes(inputDistance, inputTime) {
     // Add cross-table predictions - always bridge via 200m
     if (sourceTable === table21Data) {
         // We're in Table 21, get Table 20 predictions via 200m
+        // Only add distances that are NOT in Table 21 (30-blocks, 30-fly, 60, 100, 250)
         if (results['200']) {
             const table20Results = predictFromTable20('200', results['200']);
-            Object.assign(results, table20Results);
+            // Only copy distances unique to Table 20
+            ['30-blocks', '30-fly', '60', '100', '250'].forEach(dist => {
+                if (table20Results[dist] !== undefined) {
+                    results[dist] = table20Results[dist];
+                }
+            });
         }
     } else if (sourceTable === table20Data) {
         // We're in Table 20, get Table 21 predictions via 200m
+        // Only add distances that are NOT in Table 20 (300, 400, 600)
         if (results['200']) {
             const table21Results = predictFromTable21('200', results['200']);
-            Object.assign(results, table21Results);
+            // Only copy distances unique to Table 21
+            ['300', '400', '600'].forEach(dist => {
+                if (table21Results[dist] !== undefined) {
+                    results[dist] = table21Results[dist];
+                }
+            });
         }
     }
+
+    // Restore the input value for the input column (in case it was overwritten by cross-table predictions)
+    const inputColumnKey = Object.keys(sourceTable === table20Data ? table20Distances : table21Distances)
+        .find(key => (sourceTable === table20Data ? table20Distances : table21Distances)[key] === sourceColumn);
+    results[inputColumnKey] = inputTime;
 
     // Now interpolate for missing distances (120m, 180m, 350m, 500m)
     results['120'] = interpolateDistance(results, 100, 150, 120);
