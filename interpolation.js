@@ -37,8 +37,8 @@ function parseCSV(csvText) {
 function parseValue(valueStr) {
     if (!valueStr || valueStr.trim() === '') return null;
     
-    if (valueStr.includes('.')) {
-        const parts = valueStr.split('.');
+    if (valueStr.includes(':')) {
+        const parts = valueStr.split(':');
         const minutes = parseInt(parts[0]);
         const seconds = parseFloat(parts[1]);
         return minutes * 60 + seconds;
