@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sprint Time Predictor</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Training Time Predictor - Sprints</h1>
+            <p class="description">
+                Calculate your predicted sprint times for different distances based on your Personal Best. 
+                Select a distance you've run, enter your time, and see your estimated times for other sprint distances.
+                The data this calculator is based on comes from <u>Sprints and Relays by Dick, Frank W (1987)</u>
+                These times are <strong>predictions</strong> and may vary based on individual performance.</em>
+                <br>
+                <em>Note: The <strong>60m, 100m and 200m</strong> times are based on competition data (electronic timing), whereas the other distances use hand timing.</em>
+            </p>
+        </header>
+
+        <main>
+            <div class="input-section">
+                <div class="form-group">
+                    <label for="distance-select">Select Distance:</label>
+                    <select id="distance-select">
+                        <option value="">-- Choose a distance --</option>
+                        <option value="30-fly">30m Fly</option>
+                        <option value="30-blocks">30m Blocks</option>
+                        <option value="60">60m</option>
+                        <option value="100">100m</option>
+                        <option value="150">150m</option>
+                        <option value="200">200m</option>
+                        <option value="250">250m</option>
+                        <option value="300">300m</option>
+                        <option value="400">400m</option>
+                        <option value="600">600m</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="time-input">Enter Time (seconds):</label>
+                    <input 
+                        type="text" 
+                        id="time-input" 
+                        placeholder="e.g. 12.5"
+                        autocomplete="off"
+                    >
+                </div>
+
+                <button id="calculate-btn" class="calculate-btn">Calculate</button>
+            </div>
+
+            <div id="results-section" class="results-section" style="display: none;">
+                <h2>Predicted Times</h2>
+                <div class="table-container">
+                    <table id="results-table">
+                        <thead>
+                            <tr>
+                                <th>Distance</th>
+                                <th>100%</th>
+                                <th>95%</th>
+                                <th>90%</th>
+                                <th>85%</th>
+                                <th>80%</th>
+                                <th>75%</th>
+                            </tr>
+                        </thead>
+                        <tbody id="results-body">
+                            <!-- Results will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>For issues, feedback, or questions, please email <a href="mailto:trainingtimespred@icloud.com">trainingtimespred@icloud.com</a></p>
+        </footer>
+    </div>
+
+    <script src="interpolation.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
