@@ -170,7 +170,7 @@ td {
 
 tbody tr.highlighted {
     background-color: #e8f4fd;
-    font-weight: 1000;
+    font-weight: bold;
 }
 
 /* Responsive Design */

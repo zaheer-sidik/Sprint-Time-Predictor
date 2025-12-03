@@ -34,6 +34,20 @@ function parseCSV(csvText) {
     return data;
 }
 
+function parseValue(valueStr) {
+    if (!valueStr || valueStr.trim() === '') return null;
+    
+    if (valueStr.includes('.')) {
+        const parts = valueStr.split('.');
+        const minutes = parseInt(parts[0]);
+        const seconds = parseFloat(parts[1]);
+        return minutes * 60 + seconds;
+    }
+    
+    const value = parseFloat(valueStr);
+    return isNaN(value) ? null : value;
+}
+
 function findClosestRows(data, columnName, inputTime) {
     let lowerRow = null;
     let upperRow = null;
