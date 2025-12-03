@@ -39,26 +39,17 @@ function parseCSV(csvText) {
     return data;
 }
 
-// Parse range string (e.g., "10.09-10.16") and return midpoint
+// Parse value string and return as number
 function parseRange(rangeStr) {
     if (!rangeStr || rangeStr === '') return null;
     
-    // Handle time format with colons (e.g., "6:49-6.53")
+    // Handle time format with colons (e.g., "6:49")
     if (rangeStr.includes(':')) {
-        const parts = rangeStr.split('-');
-        const times = parts.map(part => {
-            const [min, sec] = part.split(':').map(parseFloat);
-            return min * 60 + sec;
-        });
-        return (times[0] + times[1]) / 2;
+        const [min, sec] = rangeStr.split(':').map(parseFloat);
+        return min * 60 + sec;
     }
     
     // Handle regular decimal format
-    const parts = rangeStr.split('-').map(parseFloat);
-    if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
-        return (parts[0] + parts[1]) / 2;
-    }
-    
     return parseFloat(rangeStr);
 }
 
@@ -70,7 +61,10 @@ function findBracketingRows(data, columnName, inputTime) {
     let upperDiff = Infinity;
 
     for (const row of data) {
-        const timeValue = parseRange(row[columnName]);
+        const rangeStr = row[columnName];
+        if (!rangeStr || rangeStr === '') continue;
+
+        const timeValue = parseRange(rangeStr);
         if (timeValue === null) continue;
 
         const diff = timeValue - inputTime;
@@ -219,30 +213,10 @@ function getValidRangeForDistance(table, columnName) {
         const rangeStr = row[columnName];
         if (!rangeStr || rangeStr === '') continue;
         
-        // Parse the range to get actual min and max values
-        if (rangeStr.includes(':')) {
-            // Handle time format with colons (e.g., "6:49-6.53")
-            const parts = rangeStr.split('-');
-            const times = parts.map(part => {
-                const [mins, sec] = part.split(':').map(parseFloat);
-                return mins * 60 + sec;
-            });
-            min = Math.min(min, times[0]);
-            max = Math.max(max, times[1]);
-        } else if (rangeStr.includes('-')) {
-            // Handle regular decimal format (e.g., "10.09-10.16")
-            const parts = rangeStr.split('-').map(parseFloat);
-            if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
-                min = Math.min(min, parts[0]);
-                max = Math.max(max, parts[1]);
-            }
-        } else {
-            // Single value
-            const value = parseFloat(rangeStr);
-            if (!isNaN(value)) {
-                min = Math.min(min, value);
-                max = Math.max(max, value);
-            }
+        const value = parseRange(rangeStr);
+        if (value !== null && !isNaN(value)) {
+            min = Math.min(min, value);
+            max = Math.max(max, value);
         }
     }
 
